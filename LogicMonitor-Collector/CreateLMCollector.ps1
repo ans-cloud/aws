@@ -243,7 +243,7 @@ if((getLmCollector $customerName) -eq 0)
 # Download Installer
 (downloadLmInstaller $collectorId $collectorSize)
 # Install Collector
-Start-Process "$path\LogicMonitorSetup.exe" -ArgumentList "/q" -Wait
+Start-Process "$path\LogicMonitorSetup.exe" -ArgumentList "/q" -Wait -Verb RunAs
 
 
 
