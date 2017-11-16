@@ -1,2 +1,2 @@
-![AWS](/images/aws_logo.png) 
+![AWS](/Images/aws_logo.png) 
 # Amazon AWS
