@@ -5,6 +5,6 @@
     <img src="/Images/aws_view.png"/>
 </a>
 
-This template creates a failover pair of LogicMonitor collectors and registers them in the LogicMonitor portal. The template uses the AWS Instance Userdata to download a PowerShell installation script from GitHub, once executed it registers the collectors in LogicMonitor then downloads the collector installation media, and finally installs the collector software. 
+This template creates a failover pair of LogicMonitor collectors and registers them in the LogicMonitor portal. The template uses the AWS Instance User Data to download a PowerShell installation script from GitHub, once executed it registers the collectors in LogicMonitor then downloads the collector installation media, and finally installs the collector software. 
 
 ![Diagram](/LogicMonitor-Collector/CreateLMCollector.png)
