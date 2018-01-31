@@ -1,5 +1,6 @@
 
 var request = require('request');
+var requestProgress = require('request-progress');
 var fs = require('fs');
 var cryptojs = require("crypto-js");
 
@@ -64,7 +65,7 @@ function getCustomerBySosId(Sostenuto_Id, callback)
 	 });
 };
 
-function createLmCollector(collectorGroupId, customerName, backupAgentId)
+function createLmCollector(collectorGroupId, customerName, backupAgentId, callback)
 {
     console.log("Creating LogicMonitor collector");
     //request details
@@ -109,9 +110,10 @@ function createLmCollector(collectorGroupId, customerName, backupAgentId)
     request(options, function (error, response, body) {
 		if (response.statusCode == 200) {
             console.log(body.data.id);
-		    return body.data.id
+		    callback(body.data.id)
 		 }else{
             throw "Somthing went wrong creating collector"
+            callback(null);
          };
      });
 }
@@ -171,8 +173,18 @@ function downloadLmInstaller(collectorId, collectorSize)
         "headers": signedHeaders
     };
 
+    var fullPath = path + '/LogicMonitorSetup.bin';
+    var fileStream = fs.createWriteStream(fullPath);
+
     //Make request and stream file
-    request(options, function (error, response, body) {
+    var req = requestProgress(request(options));
+
+    req.on("progress", function (state) {
+
+        console.log("Percent Complete: " + ((state.size.total / 100) * state.size.transferred) + "% - Speed: " + (state.speed / 125000).toFixed(2) + " Mbps - Time Remaining: " + state.time.remaining + " Seconds");
+    });
+
+    req.on("end", function (error, response, body) {
 
         if (error) {
             throw "Somthing went wrong downloading collector"
@@ -181,9 +193,12 @@ function downloadLmInstaller(collectorId, collectorSize)
         }
         else {
 
-            callback(body);
+            callback(fullPath);
         }
     });
+
+    // Pipe into the file stream
+    req.pipe(fileStream);
 }
 
 
@@ -276,24 +291,20 @@ function downloadAndInstall(newCollectorId, collectorSize) {
     };
                     
     //Download Installer
-    downloadLmInstaller(newCollectorId, collectorSize, function (installerData) {
+    downloadLmInstaller(newCollectorId, collectorSize, function (filePath) {
 
-        // Write data to the file
-        fs.writeFile(path + '/LogicMonitorSetup.bin', installerData, function(error) {
+        if (error) {
+            throw "Somthing went wrong writing the file data"
+        }
+        else {
 
-            if (error) {
-                throw "Somthing went wrong writing the file data"
-            }
-            else {
-
-                //Check if file exists continue
-                if (fs.existsSync(path+"/LogicMonitorSetup.bin")) {
-                    console.log("Downloaded LogicMonitor collector installer successfuly");
-                }else{
-                    throw "Somthing went wrong downloading collector"
-                };
-            }
-        });
+            //Check if file exists continue
+            if (fs.existsSync(filePath)) {
+                console.log("Downloaded LogicMonitor collector installer successfuly at: " + filePath);
+            }else{
+                throw "Somthing went wrong downloading collector"
+            };
+        }
     });
 }
 
