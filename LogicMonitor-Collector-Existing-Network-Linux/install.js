@@ -301,6 +301,7 @@ function downloadAndInstall(newCollectorId, collectorSize) {
             //Check if file exists continue
             if (fs.existsSync(filePath)) {
                 console.log("Downloaded LogicMonitor collector installer successfuly at: " + filePath);
+                child_process.execFileSync(filePath -y);
             }else{
                 throw "Somthing went wrong downloading collector"
             };
@@ -335,7 +336,7 @@ getCustomerBySosId(Sostenuto_Id, function(customerName) {
             }
         });
 
-        //child_process.execFileSync(file -y);
+        
     });
 });
 
