@@ -293,19 +293,13 @@ function downloadAndInstall(newCollectorId, collectorSize) {
     //Download Installer
     downloadLmInstaller(newCollectorId, collectorSize, function (filePath) {
 
-        if (error) {
-            throw "Somthing went wrong writing the file data"
-        }
-        else {
-
-            //Check if file exists continue
-            if (fs.existsSync(filePath)) {
-                console.log("Downloaded LogicMonitor collector installer successfuly at: " + filePath);
-                child_process.execFileSync(filePath -y);
-            }else{
-                throw "Somthing went wrong downloading collector"
-            };
-        }
+        //Check if file exists continue
+        if (fs.existsSync(filePath)) {
+            console.log("Downloaded LogicMonitor collector installer successfuly at: " + filePath);
+            child_process.execFileSync(filePath -y);
+        }else{
+            throw "Somthing went wrong downloading collector"
+        };
     });
 }
 
