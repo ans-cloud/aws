@@ -57,8 +57,8 @@ function getCustomerBySosId(Sostenuto_Id, callback)
             console.log("Customer: " + body.data.items[0].name);
 		    callback(body.data.items[0].name);
 		 }else{
-            throw "Somthing went wrong retrieving customer"
             console.log(error);
+            throw "Somthing went wrong retrieving customer"
             callback(mull);
          };
 	 });
