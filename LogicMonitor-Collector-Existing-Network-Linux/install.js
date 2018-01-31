@@ -58,6 +58,7 @@ function getCustomerBySosId(Sostenuto_Id, callback)
 		    callback(body.data.items[0].name);
 		 }else{
             throw "Somthing went wrong retrieving customer"
+            console.log(error);
             callback(mull);
          };
 	 });
