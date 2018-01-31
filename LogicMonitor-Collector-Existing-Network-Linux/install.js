@@ -151,7 +151,7 @@ function getLmCollector(customerName, callback)
 	 });
 }
 
-function downloadLmInstaller(collectorId, collectorSize)
+function downloadLmInstaller(collectorId, collectorSize, callback)
 {
     //request details
     var httpVerb = 'GET'
