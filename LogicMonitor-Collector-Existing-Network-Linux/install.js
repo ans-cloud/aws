@@ -297,7 +297,7 @@ function downloadAndInstall(newCollectorId, collectorSize) {
         //Check if file exists continue
         if (fs.existsSync(filePath)) {
             console.log("Downloaded LogicMonitor collector installer successfuly at: " + filePath);
-            exec.execSync(chmod +" 777 "+ filePath )
+            exec.execSync("chmod 777 "+ filePath )
             exec.execFileSync(filePath +" -y");
         }else{
             throw "Somthing went wrong downloading collector"
