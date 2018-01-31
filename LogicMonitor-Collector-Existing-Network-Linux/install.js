@@ -1,4 +1,3 @@
-import { callbackify } from 'util';
 
 var request = require('request');
 var fs = require('fs');
