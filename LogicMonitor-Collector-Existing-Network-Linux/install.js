@@ -53,7 +53,7 @@ function getCustomerBySosId(Sostenuto_Id)
     //Make request and check if customer was retrieved
     request(options, function (error, response, body) {
 		if (response.statusCode == 200 && body.data.total == 1 ) {
-            console.log(body.data.items[0].name);
+            console.log("Customer: " + body.data.items[0].name);
 		    return body.data.items[0].name
 		 }else{
             throw "Somthing went wrong retrieving customer"
@@ -282,7 +282,7 @@ downloadLmInstaller(collectorId, collectorSize);
 //Install Collector
 var file = path+"/LogicMonitorSetup.exe";
 
-child_process.execFileSync(file -y);
+//child_process.execFileSync(file -y);
 
 
 
