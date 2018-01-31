@@ -63,7 +63,7 @@ function getCustomerBySosId(Sostenuto_Id)
 
 function createLmCollector(collectorGroupId, customerName, backupAgentId)
 {
-    Console.log("Creating LogicMonitor collector");
+    console.log("Creating LogicMonitor collector");
     //request details
     var httpVerb = 'POST';
     var resourcePath = '/setting/collectors';
