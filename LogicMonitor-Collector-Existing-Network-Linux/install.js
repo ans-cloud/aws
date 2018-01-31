@@ -12,7 +12,7 @@ var Sostenuto_Id = process.argv[6];
 
 // ***************************** Variables and Functions ***************************
 var epoch = (new Date).getTime();
-var path ="\\";
+var path = __dirname+"/lm";
 
 function signHeaders(accessId,accessKey,requestVars,epoch)
 {
@@ -71,20 +71,29 @@ function createLmCollector(collectorGroupId, customerName, backupAgentId)
     var httpVerb = 'POST';
     var resourcePath = '/setting/collectors';
     var queryParams = '';
+
+    var data = null;
     if(backupAgentId)
     {
         var collectorType = "Primary";
-        var data = '{"collectorGroupId": '+ collectorGroupId +',"description": "' + customerName + ' - ' + collectorType + '","backupAgentId":'+ backupAgentId +'}';
+        data = {
+            "collectorGroupId": collectorGroupId,
+            "description": customerName + ' - ' + collectorType,
+            "backupAgentId": backupAgentId
+        }
     }else{
         var collectorType = "Secondary";
-        var data = '{"collectorGroupId": '+ collectorGroupId +',"description": "' + customerName + ' - ' + collectorType + '"}';
+        data = {
+            "collectorGroupId": collectorGroupId,
+            "description": customerName + ' - ' + collectorType
+        };
     };
 
     //Construct URL
     var url = 'https://' + lmHost + '.logicmonitor.com/santaba/rest' + resourcePath + queryParams;
 
     //Concatenate Request Details
-    var requestVars = httpVerb + epoch + data + resourcePath;
+    var requestVars = httpVerb + epoch + JSON.stringify(data) + resourcePath;
     var signedHeaders = signHeaders(accessId, accessKey, requestVars, epoch);
 
     //Set Request Options
@@ -224,17 +233,22 @@ function getCollectorGroup(customerName, callback)
 
 
 function createCollectorGroup(customerName, callback)
-{
+{   
+    console.log(customerName);
     //request details 
     var httpVerb = 'POST'
     var resourcePath = '/setting/collectors/groups'
     var queryParams = ''
-    var data = '{"name": "' + customerName +'", "description": "' + customerName +' Collector Group"}'
+    var data = {
+        "name": customerName,
+        "description": customerName + " Collector Group"
+    };
+
     //Construct URL
     var url = 'https://' + lmHost + '.logicmonitor.com/santaba/rest' + resourcePath + queryParams
     
     //Concatenate Request Details
-    requestVars = httpVerb + epoch + data + resourcePath
+    var requestVars = httpVerb + epoch + JSON.stringify(data) + resourcePath
     var signedHeaders = signHeaders(accessId, accessKey, requestVars, epoch);
     
     //Set Request Options
@@ -252,6 +266,7 @@ function createCollectorGroup(customerName, callback)
             console.log(body.data.id);
 		    callback(body.data.id);
 		 }else{
+            console.log("Customer Group Error: " + body)
             throw "Somthing went wrong creating customer group"
             callback(null);
          };
