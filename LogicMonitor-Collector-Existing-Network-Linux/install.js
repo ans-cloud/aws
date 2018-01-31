@@ -52,7 +52,6 @@ function getCustomerBySosId(Sostenuto_Id)
     
     //Make request and check if customer was retrieved
     request(options, function (error, response, body) {
-        console.log(error);
 		if (response.statusCode == 200 && body.data.total == 1 ) {
             console.log(body.data.items[0].name);
 		    return body.data.items[0].name
@@ -116,7 +115,7 @@ function getLmCollector(customerName)
     var url = 'https://' + lmHost + '.logicmonitor.com/santaba/rest' + resourcePath + queryParams;
     
     //Concatenate Request Details
-    var requestVars = $httpVerb + $epoch + $resourcePath;
+    var requestVars = httpVerb + epoch + resourcePath;
     var signedHeaders = signHeaders(accessId, accessKey, requestVars, epoch);
 
     //Set Request Options
