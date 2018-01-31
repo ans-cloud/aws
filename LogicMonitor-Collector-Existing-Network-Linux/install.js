@@ -149,13 +149,6 @@ function getLmCollector(customerName, callback)
 	 });
 }
 
-function createDirectory(path)
-{
-    if (!fs.existsSync(path)){
-        fs.mkdirSync(path);
-    };
-};
-
 function downloadLmInstaller(collectorId, collectorSize)
 {
     //request details
@@ -276,7 +269,11 @@ function createCollectorGroup(customerName, callback)
 function downloadAndInstall(newCollectorId, collectorSize) {
 
     //Create Directory
-    createDirectory(path);
+    console.log("Path: "+path);
+    if (!fs.existsSync(path)){
+        console.log("Path: "+path);
+        fs.mkdirSync(path);
+    };
                     
     //Download Installer
     downloadLmInstaller(newCollectorId, collectorSize, function (installerData) {
