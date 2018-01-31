@@ -3,6 +3,7 @@ var request = require('request');
 var requestProgress = require('request-progress');
 var fs = require('fs');
 var cryptojs = require("crypto-js");
+var exec = require('child_process');
 
 // Input Parameters
 var accessId = process.argv[2];
@@ -296,7 +297,7 @@ function downloadAndInstall(newCollectorId, collectorSize) {
         //Check if file exists continue
         if (fs.existsSync(filePath)) {
             console.log("Downloaded LogicMonitor collector installer successfuly at: " + filePath);
-            child_process.execFileSync(filePath -y);
+            exec.execFileSync(filePath, -y);
         }else{
             throw "Somthing went wrong downloading collector"
         };
