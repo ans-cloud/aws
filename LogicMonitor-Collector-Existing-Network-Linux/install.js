@@ -1,3 +1,5 @@
+import { callbackify } from 'util';
+
 var request = require('request');
 var fs = require('fs');
 var cryptojs = require("crypto-js");
@@ -28,7 +30,7 @@ function signHeaders(accessId,accessKey,requestVars,epoch)
     return headers
 };
 
-function getCustomerBySosId(Sostenuto_Id)
+function getCustomerBySosId(Sostenuto_Id, callback)
 {
     //Request details
     var httpVerb = "GET";
@@ -54,9 +56,10 @@ function getCustomerBySosId(Sostenuto_Id)
     request(options, function (error, response, body) {
 		if (response.statusCode == 200 && body.data.total == 1 ) {
             console.log("Customer: " + body.data.items[0].name);
-		    return body.data.items[0].name
+		    callback(body.data.items[0].name);
 		 }else{
             throw "Somthing went wrong retrieving customer"
+            callback(mull);
          };
 	 });
 };
@@ -104,7 +107,7 @@ function createLmCollector(collectorGroupId, customerName, backupAgentId)
      });
 }
 
-function getLmCollector(customerName)
+function getLmCollector(customerName, callback)
 {
     //request details
 
@@ -130,9 +133,9 @@ function getLmCollector(customerName)
     request(options, function (error, response, body) {
 		if (response.statusCode == 200 && body.data.total == 1 ) {
             console.log(body.data.items[0].id);
-		    return body.data.items[0].id
+		    callback(body.data.items[0].id);
 		 }else{
-            return 0
+            callback(null);
          };
 	 });
 }
@@ -165,23 +168,24 @@ function downloadLmInstaller(collectorId, collectorSize)
         "uri": url,
         "headers": signedHeaders
     };
-    
-    // Create filestream
-    var fileStream = fs.createWriteStream(path + '/LogicMonitorSetup.bin');  
 
     //Make request and stream file
-    request(options).pipe(fileStream);
+    request(options, function (error, response, body) {
 
-    //Check if file exists continue
-    if (fs.existsSync(path+"/LogicMonitorSetup.bin")) {
-        console.log("Downloaded LogicMonitor collector installer successfuly");
-    }else{
-        throw "Somthing went wrong downloading collector"
-    };
+        if (error) {
+            throw "Somthing went wrong downloading collector"
+
+            callback(null);
+        }
+        else {
+
+            callback(body);
+        }
+    });
 }
 
 
-function getCollectorGroup(customerName)
+function getCollectorGroup(customerName, callback)
 {
     //request details
 
@@ -207,15 +211,19 @@ function getCollectorGroup(customerName)
     request(options, function (error, response, body) {
 		if (response.statusCode == 200 && body.data.total == 1 ) {
             console.log(body.data.items[0].id);
-		    return body.data.items[0].id
+		    callback(body.data.items[0].id);
 		 }else{
-            return 0
+            
+            createCollectorGroup(customerName, function(collectorGroupId) {
+
+                callback(collectorGroupId);
+            });
          };
 	 });
 }
 
 
-function createCollectorGroup($customerName)
+function createCollectorGroup(customerName, callback)
 {
     //request details 
     var httpVerb = 'POST'
@@ -242,48 +250,71 @@ function createCollectorGroup($customerName)
     request(options, function (error, response, body) {
 		if (response.statusCode == 200) {
             console.log(body.data.id);
-		    return body.data.id
+		    callback(body.data.id);
 		 }else{
             throw "Somthing went wrong creating customer group"
+            callback(null);
          };
      });
+}
+
+function downloadAndInstall(newCollectorId, collectorSize) {
+
+    //Create Directory
+    createDirectory(path);
+                    
+    //Download Installer
+    downloadLmInstaller(newCollectorId, collectorSize, function (installerData) {
+
+        // Write data to the file
+        fs.writeFile(path + '/LogicMonitorSetup.bin', installerData, function(error) {
+
+            if (error) {
+                throw "Somthing went wrong writing the file data"
+            }
+            else {
+
+                //Check if file exists continue
+                if (fs.existsSync(path+"/LogicMonitorSetup.bin")) {
+                    console.log("Downloaded LogicMonitor collector installer successfuly");
+                }else{
+                    throw "Somthing went wrong downloading collector"
+                };
+            }
+        });
+    });
 }
 
 
 // ***************************** Script *************************** 
 // Get Customer Name
-var customerName = getCustomerBySosId(Sostenuto_Id);
+getCustomerBySosId(Sostenuto_Id, function(customerName) {
 
-//Create Collector Group if it does not exist
-if(getCollectorGroup(customerName) == 0 )
-{
-    createCollectorGroup(customerName);
-};
+    //Create Collector Group if it does not exist
+    getCollectorGroup(customerName, function(collectorGroupId) {
 
-//Get Collector Group Id
-var collectorGroupId = getCollectorGroup(customerName);
+        //Check if Secondary collector exists, then create a Secondary or Primary on test result
+        getLmCollector(customerName, function(collectorId) {
 
-//Check if Secondary collector exists, then create a Secondary or Primary on test result
-if(getLmCollector(customerName) == 0)
-{
-    //Create a Secondary Collector in LogicMonitor
-    var backupAgentId = '';
-    var collectorId = createLmCollector(collectorGroupId, customerName, backupAgentId);
-}else{
-    //Create a Primary Collector in LogicMonitor
-    var backupAgentId = getLmCollector(customerName);
-    var collectorId = createLmCollector(collectorGroupId, customerName, backupAgentId);
-}
+            if (collectorId == null) {
 
-//Create Directory
-createDirectory(path);
-//Download Installer
-downloadLmInstaller(collectorId, collectorSize);
-//Install Collector
-var file = path+"/LogicMonitorSetup.exe";
+                //Create a Secondary Collector in LogicMonitor
+                createLmCollector(collectorGroupId, customerName, "", function(newCollectorId) {
 
-//child_process.execFileSync(file -y);
+                    downloadAndInstall(newCollectorId, collectorSize);
+                });
+            }else{
+                //Create a Primary Collector in LogicMonitor
+                createLmCollector(collectorGroupId, customerName, collectorId, function(newCollectorId) {
 
+                    downloadAndInstall(newCollectorId, collectorSize);
+                });
+            }
+        });
+
+        //child_process.execFileSync(file -y);
+    });
+});
 
 
  
