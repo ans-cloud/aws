@@ -279,7 +279,7 @@ downloadLmInstaller(collectorId, collectorSize);
 //Install Collector
 var file = path+"/LogicMonitorSetup.exe";
 
-child_process.execFileSync(file[-y][]);
+child_process.execFileSync(file -y);
 
 
 
