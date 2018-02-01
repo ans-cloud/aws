@@ -249,11 +249,10 @@ def updateCollectorDeviceGroup(deviceId,deviceGroupId):
 
     #Make request
     response = requests.patch(url, data=data, headers=signedHeaders(requestVars))
-    
+   
     responseJson = response.json()
     if response.status_code == 200:
         print("Updated collectors device group id")
-        print(responseJson)
     else:
         raise Exception('Somthing went wrong updating customer group')
 
