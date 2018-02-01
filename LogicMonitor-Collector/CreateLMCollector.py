@@ -263,7 +263,7 @@ def getLmCollectorDeviceId(collectorId):
 
     #Request Info
     httpVerb = 'GET'
-    resourcePath = '/setting/collectors' + str (collectorId)
+    resourcePath = '/setting/collectors/' + str (collectorId)
     queryParams = ''
     data = ''
 
