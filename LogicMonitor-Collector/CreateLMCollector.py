@@ -236,10 +236,10 @@ def updateCollectorDeviceGroup(deviceId,deviceGroupId):
     """function update LogicMonitor collectors device group"""
 
     #Request Info
-    httpVerb = 'PUT'
-    resourcePath = '/device/devices/' + str(deviceId) + '/properties/deviceGroupId'
-    queryParams = ''
-    data = '{"value":' + str(deviceGroupId) + '}'
+    httpVerb = 'PATCH'
+    resourcePath = '/device/devices/' + str(deviceId) + '/properties/devicegroupid'
+    queryParams = '?patchFields=hostGroupIds'
+    data = '{"hostGroupIds":' + str(deviceGroupId) + '}'
 
     #Construct URL
     url = 'https://'+ lmHost +'.logicmonitor.com/santaba/rest' + resourcePath + queryParams
@@ -248,7 +248,7 @@ def updateCollectorDeviceGroup(deviceId,deviceGroupId):
     requestVars = httpVerb + epoch + data + resourcePath
 
     #Make request
-    response = requests.put(url, data=data, headers=signedHeaders(requestVars))
+    response = requests.patch(url, data=data, headers=signedHeaders(requestVars))
     
     responseJson = response.json()
     if response.status_code == 200:
