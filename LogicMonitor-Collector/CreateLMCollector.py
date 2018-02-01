@@ -239,7 +239,7 @@ def updateCollectorDeviceGroup(deviceId,deviceGroupId):
     httpVerb = 'PUT'
     resourcePath = '/device/devices/' + str(deviceId) + '/properties/hostGroupIds'
     queryParams = ''
-    data = '{"value":"' + str (deviceGroupId) + '"}'
+    data = '{"value":' + str(deviceGroupId) + '}'
 
     #Construct URL
     url = 'https://'+ lmHost +'.logicmonitor.com/santaba/rest' + resourcePath + queryParams
@@ -253,6 +253,7 @@ def updateCollectorDeviceGroup(deviceId,deviceGroupId):
     responseJson = response.json()
     if response.status_code == 200:
         print("Updated collectors device group id")
+        print(responseJson)
     else:
         raise Exception('Somthing went wrong updating customer group')
 
