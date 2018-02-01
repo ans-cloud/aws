@@ -70,6 +70,31 @@ def getCustomerBySosId():
     else:
         raise Exception('Error retrieving customer name from Sos Id')
 
+def getCustomerDeviceGrpBySosId():
+    """function to get Customer by Sostenuto ID"""
+
+    #Request Info
+    httpVerb = 'GET'
+    resourcePath = '/device/groups'
+    queryParams = '?fields=id,fullPath,name,customProperties&filter=customProperties.name:SOS_CUSTOMER_ID,customProperties.value:' + Sostenuto_Id
+    data = ''
+
+    #Construct URL
+    url = 'https://'+ lmHost +'.logicmonitor.com/santaba/rest' + resourcePath + queryParams
+
+    #Concatenate Request details
+    requestVars = httpVerb + epoch + data + resourcePath
+
+    #Make request
+    response = requests.get(url, data=data, headers=signedHeaders(requestVars))
+    responseJson = response.json()
+    print("Customer Name: " + responseJson['data']['items'][0]['name'])
+    if response.status_code == 200 and responseJson['data']['total'] == 1:
+        return responseJson['data']['items'][0]['id']
+    else:
+        raise Exception('Error retrieving customer device grp id from Sos Id')
+
+
 def createLmCollector(collectorGroupId, customerName, backupAgentId):
     """function to create LogicMonitor collector"""
     print("Creating LogicMonitor Collector")
@@ -207,6 +232,54 @@ def createCollectorGroup(customerName):
     else:
         raise Exception('Somthing went wrong creating customer group')
 
+def updateCollectorDeviceGroup(deviceId,deviceGroupId):
+    """function update LogicMonitor collectors device group"""
+
+    #Request Info
+    httpVerb = 'PUT'
+    resourcePath = '/device/devices/' + deviceId + '/properties/hostGroupIds'
+    queryParams = ''
+    data = '{"value":"' + deviceGroupId + ''"}'
+
+    #Construct URL
+    url = 'https://'+ lmHost +'.logicmonitor.com/santaba/rest' + resourcePath + queryParams
+
+    #Concatenate Request details
+    requestVars = httpVerb + epoch + data + resourcePath
+
+    #Make request
+    response = requests.put(url, data=data, headers=signedHeaders(requestVars))
+    
+    responseJson = response.json()
+    if response.status_code == 200:
+        return responseJson['data']['id']
+    else:
+        raise Exception('Somthing went wrong creating customer group')
+
+
+def getLmCollectorDeviceId(collectorId):
+    """function to get LogicMonitor collector Id"""
+    print("Getting LogicMonitor Collector Device Id")
+
+    #Request Info
+    httpVerb = 'GET'
+    resourcePath = '/setting/collectors' + str (collectorId)
+    queryParams = ''
+    data = ''
+
+    #Construct URL
+    url = 'https://'+ lmHost +'.logicmonitor.com/santaba/rest' + resourcePath + queryParams
+
+    #Concatenate Request details
+    requestVars = httpVerb + epoch + data + resourcePath
+
+    #Make request
+    response = requests.get(url, data=data, headers=signedHeaders(requestVars))
+    responseJson = response.json()
+    if response.status_code == 200:
+        return responseJson['data']['collectorDeviceId']
+    else:
+        raise Exception('Somthing went wrong getting collectors device id')
 
 # ***************************** Script *************************** #
 # Get Customer Name
@@ -238,3 +311,12 @@ downloadLmInstaller(collectorId)
 # Install Collector
 os.system('chmod 777 ' + path + '/LogicMonitorSetup.bin')
 os.system(path + '/LogicMonitorSetup.bin -y')
+
+# Get DeviceId from Collector
+deviceId = getLmCollectorDeviceId(collectorId)
+
+# Get device group id from customer
+deviceGroupId = getCustomerDeviceGrpBySosId()
+
+# Update collectors device group
+updateCollectorDeviceGroup(deviceId, deviceGroupId)
