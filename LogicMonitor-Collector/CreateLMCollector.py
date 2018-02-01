@@ -236,5 +236,5 @@ createDirectory()
 downloadLmInstaller(collectorId)
 
 # Install Collector
-os.system('chmod 777 ' + path + '\LogicMonitorSetup.bin')
-os.system(path + '\LogicMonitorSetup.bin -y')
+os.system('chmod 777 ' + path + '/LogicMonitorSetup.bin')
+os.system(path + '/LogicMonitorSetup.bin -y')
