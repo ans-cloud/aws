@@ -28,7 +28,7 @@ lmHost = sys.argv[4]
 Sostenuto_Id = sys.argv[5]
 
 #Variables
-path = r"\ans"
+path = r"/ans"
 
 #Get current time in milliseconds
 epoch = str(int(time.time() * 1000))
@@ -150,13 +150,13 @@ def downloadLmInstaller(collectorId):
     #Make request
     response = requests.get(url, stream=True, headers=signedHeaders(requestVars))
 
-    with open(path + '\LogicMonitorSetup.bin', 'wb') as fileStream:
+    with open(path + '/LogicMonitorSetup.bin', 'wb') as fileStream:
         for chunk in response.iter_content(chunk_size=1024): 
             if chunk: # filter out keep-alive new chunks
                 fileStream.write(chunk)
     
     responseJson = response.json()
-    if response.status_code == 200 and os.path.exists(path + '\LogicMonitorSetup.bin'):
+    if response.status_code == 200 and os.path.exists(path + '/LogicMonitorSetup.bin'):
         print("Downloaded LogicMonitor Collector")
     else:
         raise Exception('Somthing went wrong downloading collector')    
