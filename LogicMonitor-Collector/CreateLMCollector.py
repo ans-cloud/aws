@@ -28,7 +28,7 @@ lmHost = sys.argv[4]
 Sostenuto_Id = sys.argv[5]
 
 #Variables
-path = r"C:\ngtest"
+path = r"\ans"
 
 #Get current time in milliseconds
 epoch = str(int(time.time() * 1000))
