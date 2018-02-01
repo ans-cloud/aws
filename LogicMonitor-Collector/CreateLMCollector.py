@@ -237,7 +237,7 @@ def updateCollectorDeviceGroup(deviceId,deviceGroupId):
 
     #Request Info
     httpVerb = 'PATCH'
-    resourcePath = '/device/devices/' + str(deviceId) + '/properties/devicegroupid'
+    resourcePath = '/device/devices/' + str(deviceId)
     queryParams = '?patchFields=hostGroupIds'
     data = '{"hostGroupIds":' + str(deviceGroupId) + '}'
 
