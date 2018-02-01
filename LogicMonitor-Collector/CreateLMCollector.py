@@ -239,7 +239,7 @@ def updateCollectorDeviceGroup(deviceId,deviceGroupId):
     httpVerb = 'PUT'
     resourcePath = '/device/devices/' + str (deviceId) + '/properties/hostGroupIds'
     queryParams = ''
-    data = '{"value":"' + str (deviceGroupId) + ''"}'
+    data = '{"value":"' + str (deviceGroupId) + '"}'
 
     #Construct URL
     url = 'https://'+ lmHost +'.logicmonitor.com/santaba/rest' + resourcePath + queryParams
