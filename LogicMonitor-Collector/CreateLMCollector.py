@@ -237,7 +237,7 @@ def updateCollectorDeviceGroup(deviceId,deviceGroupId):
 
     #Request Info
     httpVerb = 'PUT'
-    resourcePath = '/device/devices/' + str(deviceId) + '/properties/hostGroupIds'
+    resourcePath = '/device/devices/' + str(deviceId) + '/properties/deviceGroupId'
     queryParams = ''
     data = '{"value":' + str(deviceGroupId) + '}'
 
