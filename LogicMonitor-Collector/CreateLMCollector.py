@@ -88,7 +88,7 @@ def getCustomerDeviceGrpBySosId():
     #Make request
     response = requests.get(url, data=data, headers=signedHeaders(requestVars))
     responseJson = response.json()
-    print("Customer Name: " + responseJson['data']['items'][0]['name'])
+    print("Device Group Id: " + str (responseJson['data']['items'][0]['id']))
     if response.status_code == 200 and responseJson['data']['total'] == 1:
         return responseJson['data']['items'][0]['id']
     else:
@@ -237,7 +237,7 @@ def updateCollectorDeviceGroup(deviceId,deviceGroupId):
 
     #Request Info
     httpVerb = 'PUT'
-    resourcePath = '/device/devices/' + str (deviceId) + '/properties/hostGroupIds'
+    resourcePath = '/device/devices/' + str(deviceId) + '/properties/hostGroupIds'
     queryParams = ''
     data = '{"value":"' + str (deviceGroupId) + '"}'
 
@@ -252,9 +252,9 @@ def updateCollectorDeviceGroup(deviceId,deviceGroupId):
     
     responseJson = response.json()
     if response.status_code == 200:
-        return responseJson['data']['id']
+        print("Updated collectors device group id")
     else:
-        raise Exception('Somthing went wrong creating customer group')
+        raise Exception('Somthing went wrong updating customer group')
 
 
 def getLmCollectorDeviceId(collectorId):
@@ -263,7 +263,7 @@ def getLmCollectorDeviceId(collectorId):
 
     #Request Info
     httpVerb = 'GET'
-    resourcePath = '/setting/collectors/' + str (collectorId)
+    resourcePath = '/setting/collectors/'+ str(collectorId)
     queryParams = ''
     data = ''
 
@@ -277,6 +277,7 @@ def getLmCollectorDeviceId(collectorId):
     response = requests.get(url, data=data, headers=signedHeaders(requestVars))
     responseJson = response.json()
     if response.status_code == 200:
+        print("Collector Device Id: " + str(responseJson['data']['collectorDeviceId']))
         return responseJson['data']['collectorDeviceId']
     else:
         raise Exception('Somthing went wrong getting collectors device id')
