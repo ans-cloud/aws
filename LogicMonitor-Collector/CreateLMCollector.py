@@ -156,7 +156,7 @@ def downloadLmInstaller(collectorId):
                 fileStream.write(chunk)
     
     responseJson = response.json()
-    if response.status_code == 200 and os.path.exists(path + '/LogicMonitorSetup.bin'):
+    if os.path.exists(path + '/LogicMonitorSetup.bin'):
         print("Downloaded LogicMonitor Collector")
     else:
         raise Exception('Somthing went wrong downloading collector')    
