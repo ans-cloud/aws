@@ -5,6 +5,6 @@
 
 This template creates a failover pair of LogicMonitor collectors into an existing Subnet and registers them in the LogicMonitor portal. The template uses the EC2 Userdata to download a Python installation script from GitHub, once executed it registers the collectors in LogicMonitor then downloads the collector installation media, and finally installs the collector software. 
 
-![Diagram](/LogicMonitor-Collector-Existing-Network/CreateLMCollector.png)
+![Diagram](/LogicMonitor-Collector-Existing-No-PublicIP/CreateLMCollector.png)
 
 
