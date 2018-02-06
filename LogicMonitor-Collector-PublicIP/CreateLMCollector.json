@@ -143,7 +143,7 @@
                                 "alternatives --set python /usr/bin/python3.5 \n",
                                 "pip install requests \n",
                                 "wget https://raw.githubusercontent.com/ans-cloud/aws/master/LogicMonitor-Collector-PublicIP/CreateLMCollector.py \n",
-                                "python CreateLMCollector.py ",{"Ref": "accessId"}," ",{"Ref": "accessKey"}," ",{"Ref": "collectorSize"}," ",{"Ref": "lmHost"}," ",{"Ref": "SostenutoId"}
+                                "python CreateLMCollector.py '",{"Ref": "accessId"},"' '",{"Ref": "accessKey"},"' '",{"Ref": "collectorSize"},"' '",{"Ref": "lmHost"},"' '",{"Ref": "SostenutoId"},"'"
                             ]
                         ]
                     }
